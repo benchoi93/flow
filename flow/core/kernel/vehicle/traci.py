@@ -9,6 +9,7 @@ import collections
 import warnings
 from flow.controllers.car_following_models import SimCarFollowingController
 from flow.controllers.rlcontroller import RLController
+from flow.controllers.rlcontroller import lanechange_RLcontroller
 from flow.controllers.lane_change_controllers import SimLaneChangeController
 from bisect import bisect_left
 import itertools
@@ -317,6 +318,9 @@ class TraCIVehicle(KernelVehicle):
 
         # add the vehicle's id to the list of vehicle ids
         if accel_controller[0] == RLController:
+            if veh_id not in self.__rl_ids:
+                self.__rl_ids.append(veh_id)
+        elif lc_controller[0] == lanechange_RLcontroller:
             if veh_id not in self.__rl_ids:
                 self.__rl_ids.append(veh_id)
         else:
@@ -678,6 +682,8 @@ class TraCIVehicle(KernelVehicle):
     def set_lane_leaders(self, veh_id, lane_leaders):
         """Set the lane leaders of the specified vehicle."""
         self.__vehicles[veh_id]["lane_leaders"] = lane_leaders
+        
+
 
     def get_lane_leaders(self, veh_id, error=None):
         """See parent class."""
@@ -977,10 +983,14 @@ class TraCIVehicle(KernelVehicle):
             veh_ids = [veh_ids]
             direction = [direction]
 
+        # print("vehid : {}".format(str(veh_ids)))
+        # print("direction : {}".format(str(direction)))
+
+        # if len(veh_ids) > 0 :
         # if any of the directions are not -1, 0, or 1, raise a ValueError
         if any(d not in [-1, 0, 1] for d in direction):
-            raise ValueError(
-                "Direction values for lane changes may only be: -1, 0, or 1.")
+            msg = "Direction values for lane changes may only be: -1, 0, or 1., but got {}".format(str(direction))
+            raise ValueError(msg)
 
         for i, veh_id in enumerate(veh_ids):
             # check for no lane change

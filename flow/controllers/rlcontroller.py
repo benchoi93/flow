@@ -41,3 +41,43 @@ class RLController(BaseController):
     def get_accel(self, env):
         """Pass, as this is never called; required to override abstractmethod."""
         pass
+
+
+"""Contains a list of custom lane change controllers."""
+
+from flow.controllers.base_lane_changing_controller import \
+    BaseLaneChangeController
+
+
+class lanechange_RLcontroller(BaseLaneChangeController):
+    """A controller used to enforce sumo lane-change dynamics on a vehicle.
+
+    Usage: See base class for usage example.
+    """
+    def __init__(self,veh_id,lane_change_params=None):
+        BaseLaneChangeController.__init__(self, veh_id,lane_change_params)
+
+    def get_lane_change_action(self, env):
+        """See parent class."""
+        # TODO : change direction from 0,1,2 to -1,0,1
+
+        
+        return 0
+
+    def get_action(self, env):
+        """Return the action of the lane change controller.
+
+        Modifies the lane change action to ensure safety, if requested.
+
+        Parameters
+        ----------
+        env : flow.envs.Env
+            state of the environment at the current time step
+
+        Returns
+        -------
+        float or int
+            lane change action
+        """
+        lc_action = self.get_lane_change_action(env)
+        return lc_action

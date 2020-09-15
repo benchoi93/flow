@@ -116,6 +116,10 @@ def make_create_env(params, version=0, render=None):
         else:
             entry_point = params["env_name"].__module__ + ':' + params["env_name"].__name__
 
+        env_dict = gym.envs.registration.registry.env_specs.copy()
+        if env_name in env_dict.keys():
+            del gym.envs.registration.registry.env_specs[env_name]
+
         # register the environment with OpenAI gym
         register(
             id=env_name,
