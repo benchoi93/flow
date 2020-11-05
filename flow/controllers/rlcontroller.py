@@ -60,8 +60,6 @@ class lanechange_RLcontroller(BaseLaneChangeController):
     def get_lane_change_action(self, env):
         """See parent class."""
         # TODO : change direction from 0,1,2 to -1,0,1
-
-        
         return 0
 
     def get_action(self, env):
